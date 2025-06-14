@@ -13,9 +13,16 @@ const DashboardSummary = ({ goals = [], exchangeRate = 1, lastUpdated = '', onRe
   const totalTargetInINR = totalTargetInUSD * exchangeRate;
   const totalSavedInINR = totalSavedInUSD * exchangeRate;
 
-  const avgProgress = totalTargetInINR === 0
+  // ✅ Corrected overall progress using individual goal progress capped at 100%
+  const avgProgress = goals.length === 0
     ? 0
-    : Math.round((totalSavedInINR / totalTargetInINR) * 100);
+    : Math.round(
+        goals.reduce((sum, g) => {
+          const saved = g.contributions.reduce((cSum, c) => cSum + c.amount, 0);
+          const progress = Math.min((saved / g.target) * 100, 100);
+          return sum + progress;
+        }, 0) / goals.length
+      );
 
   return (
     <div className="bg-gradient-to-r from-indigo-500 to-blue-500 text-white p-6 rounded-2xl shadow-md">
