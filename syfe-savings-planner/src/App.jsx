@@ -14,19 +14,21 @@ function App() {
   const [lastUpdated, setLastUpdated] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Load saved goals and exchange rate on first render
   useEffect(() => {
     const savedGoals = Cookies.get('syfe_goals');
     if (savedGoals) {
       setGoals(JSON.parse(savedGoals));
     }
-
     loadRate();
   }, []);
 
+  // Update cookie whenever goals change
   useEffect(() => {
     Cookies.set('syfe_goals', JSON.stringify(goals), { expires: 7 });
   }, [goals]);
 
+  // Fetch latest exchange rate
   const loadRate = async () => {
     setIsLoading(true);
     try {
@@ -57,9 +59,10 @@ function App() {
     );
   };
 
-  // ✅ Delete goal by ID
+
   const deleteGoal = (goalId) => {
-    setGoals(prev => prev.filter(goal => goal.id !== goalId));
+    const updatedGoals = goals.filter(goal => goal.id !== goalId);
+    setGoals(updatedGoals);
   };
 
   return (
@@ -73,6 +76,7 @@ function App() {
           </p>
         </div>
 
+     
         <DashboardSummary
           goals={goals}
           exchangeRate={exchangeRate}
@@ -83,6 +87,7 @@ function App() {
 
         <GoalForm addGoal={addGoal} />
 
+     
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {goals.map(goal => (
             <GoalCard
@@ -90,7 +95,7 @@ function App() {
               goal={goal}
               exchangeRate={exchangeRate}
               addContribution={setModalGoalId}
-              onDelete={deleteGoal} // ✅ pass delete handler
+              onDelete={deleteGoal} 
             />
           ))}
         </div>
