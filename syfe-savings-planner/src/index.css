@@ -1,1 +1,19 @@
 @import "tailwindcss";
+@layer utilities {
+  .scroll-horizontal {
+    white-space: nowrap;
+    animation: scroll-left 15s linear infinite;
+  }
+
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+}
+body {
+  font-family: 'Inter', sans-serif;
+}
