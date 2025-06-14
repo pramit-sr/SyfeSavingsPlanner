@@ -15,7 +15,7 @@ export const fetchExchangeRate = async () => {
 
     return {
       rate: res.data.conversion_rates.INR,
-      time: res.data.time_last_update_utc,
+      time: new Date().toLocaleString(), 
     };
   } catch (err) {
     console.error("Exchange rate fetch error:", err.message);

@@ -18,7 +18,6 @@ const GoalForm = ({ addGoal }) => {
       contributions: [],
     });
 
-    // Reset form and close modal
     setName('');
     setTarget('');
     setCurrency('INR');
@@ -29,38 +28,40 @@ const GoalForm = ({ addGoal }) => {
     <div className="text-right">
       <button
         onClick={() => setIsOpen(true)}
-        className="bg-blue-600 text-white font-medium px-4 py-2 rounded-md hover:bg-blue-700"
+        className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-semibold px-5 py-2 rounded-lg shadow hover:shadow-md hover:from-blue-600 transition"
       >
         + Add Goal
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
-          <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-lg relative">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl relative">
             <button
               onClick={() => setIsOpen(false)}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
+              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-xl transition"
             >
-              ✖
+              &times;
             </button>
-            <h2 className="text-xl font-semibold mb-4">Create New Goal</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">Create New Goal</h2>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
               <input
                 type="text"
                 placeholder="Goal Name"
-                className="w-full border rounded px-3 py-2"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                 value={name}
                 onChange={e => setName(e.target.value)}
               />
               <input
                 type="number"
                 placeholder="Target Amount"
-                className="w-full border rounded px-3 py-2"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                 value={target}
                 onChange={e => setTarget(e.target.value)}
               />
               <select
-                className="w-full border rounded px-3 py-2"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
                 value={currency}
                 onChange={e => setCurrency(e.target.value)}
               >
@@ -69,7 +70,7 @@ const GoalForm = ({ addGoal }) => {
               </select>
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition shadow"
               >
                 Save Goal
               </button>

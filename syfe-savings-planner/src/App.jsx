@@ -12,6 +12,7 @@ function App() {
   const [modalGoalId, setModalGoalId] = useState(null);
   const [exchangeRate, setExchangeRate] = useState(80);
   const [lastUpdated, setLastUpdated] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // ✅ loading state
 
   useEffect(() => {
     const savedGoals = Cookies.get('syfe_goals');
@@ -26,24 +27,39 @@ function App() {
     Cookies.set('syfe_goals', JSON.stringify(goals), { expires: 7 });
   }, [goals]);
 
+  // ✅ Load exchange rate and time with UI re-render trick
   const loadRate = async () => {
+    setIsLoading(true); // start loading
     try {
       const data = await fetchExchangeRate();
-      setExchangeRate(data.rate);
-      setLastUpdated(data.time);
+
+      // ✅ Force update if rate is the same
+      setExchangeRate(prev => {
+        if (prev === data.rate) return data.rate + 0.0001;
+        return data.rate;
+      });
+
+      setLastUpdated(new Date(data.time).toLocaleString()); // format for UI
+
+      console.log("Exchange Rate:", data.rate);
+      console.log("Last Updated:", data.time);
     } catch (err) {
       alert("Failed to fetch exchange rate.");
+    } finally {
+      setIsLoading(false); // end loading
     }
   };
 
   const addGoal = (goal) => setGoals(prev => [...prev, goal]);
 
   const addContribution = (goalId, contribution) => {
-    setGoals(prev => prev.map(goal =>
-      goal.id === goalId
-        ? { ...goal, contributions: [...goal.contributions, contribution] }
-        : goal
-    ));
+    setGoals(prev =>
+      prev.map(goal =>
+        goal.id === goalId
+          ? { ...goal, contributions: [...goal.contributions, contribution] }
+          : goal
+      )
+    );
   };
 
   return (
@@ -53,15 +69,17 @@ function App() {
 
         <div className="overflow-hidden w-full bg-white py-2 rounded-md shadow-inner">
           <p className="scroll-horizontal text-sm text-gray-700 px-4">
-            Exchange Rate (USD to INR): {exchangeRate} | Last updated: {lastUpdated || 'N/A'}
+            Exchange Rate (USD to INR): {exchangeRate.toFixed(2)} | Last updated: {lastUpdated || 'N/A'}
           </p>
         </div>
 
-        {/* ✅ Pass props here */}
+        {/* ✅ Dashboard with refresh */}
         <DashboardSummary
           goals={goals}
           exchangeRate={exchangeRate}
           lastUpdated={lastUpdated}
+          onRefresh={loadRate}
+          isLoading={isLoading} // ✅ pass loading
         />
 
         <GoalForm addGoal={addGoal} />
