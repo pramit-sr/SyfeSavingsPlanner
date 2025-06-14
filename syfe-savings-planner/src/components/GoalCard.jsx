@@ -1,13 +1,10 @@
 import React from 'react';
 
-const GoalCard = ({ goal, exchangeRate, addContribution }) => {
-  if (!goal || !exchangeRate) return null;
+const GoalCard = ({ goal, addContribution }) => {
+  if (!goal) return null;
 
   const saved = goal.contributions.reduce((sum, c) => sum + c.amount, 0);
   const progress = Math.min((saved / goal.target) * 100, 100);
-  const converted = goal.currency === "USD"
-    ? `₹${(goal.target * exchangeRate).toLocaleString()}`
-    : `$${(goal.target / exchangeRate).toLocaleString()}`;
 
   return (
     <div className="rounded-xl bg-white shadow-lg p-5 space-y-2">
@@ -22,14 +19,15 @@ const GoalCard = ({ goal, exchangeRate, addContribution }) => {
           : `₹${goal.target.toLocaleString()}`}
       </p>
 
-      <p className="text-xs text-gray-500">{converted}</p>
-
       <div className="text-sm text-gray-700">
         Progress: {goal.currency} {saved.toLocaleString()} saved
       </div>
 
       <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
-        <div className="bg-indigo-500 h-2 rounded-full" style={{ width: `${progress}%` }}></div>
+        <div
+          className="bg-indigo-500 h-2 rounded-full"
+          style={{ width: `${progress}%` }}
+        ></div>
       </div>
 
       <div className="text-xs text-gray-500">

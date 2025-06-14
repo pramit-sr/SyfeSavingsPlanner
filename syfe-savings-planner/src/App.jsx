@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Cookies from 'js-cookie';
+
 import GoalForm from './components/GoalForm';
 import GoalCard from './components/GoalCard';
 import AddContributionModal from './components/AddContributionModal';
@@ -7,6 +9,19 @@ import DashboardSummary from './components/DashboardSummary';
 const App = () => {
   const [goals, setGoals] = useState([]);
   const [modalGoalId, setModalGoalId] = useState(null);
+
+  // Load from cookie on first mount
+  useEffect(() => {
+    const saved = Cookies.get('syfe_goals');
+    if (saved) {
+      setGoals(JSON.parse(saved));
+    }
+  }, []);
+
+  // Save to cookie when goals change
+  useEffect(() => {
+    Cookies.set('syfe_goals', JSON.stringify(goals), { expires: 7 });
+  }, [goals]);
 
   const addGoal = (goal) => {
     setGoals(prev => [...prev, goal]);
