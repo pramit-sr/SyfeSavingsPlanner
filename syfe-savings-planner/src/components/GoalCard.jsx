@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const GoalCard = ({ goal, exchangeRate, addContribution }) => {
+const GoalCard = ({ goal, exchangeRate, addContribution, onDelete }) => {
+  const [showHistory, setShowHistory] = useState(false);
+
   if (!goal || !exchangeRate) return null;
 
   const saved = goal.contributions.reduce((sum, c) => sum + c.amount, 0);
@@ -11,7 +13,6 @@ const GoalCard = ({ goal, exchangeRate, addContribution }) => {
     ? `₹${(goal.target * exchangeRate).toLocaleString()}`
     : `$${(goal.target / exchangeRate).toLocaleString()}`;
 
-  // Remaining value, set to 0 if goal completed
   const remaining = Math.max(0, goal.target - saved);
 
   return (
@@ -60,6 +61,45 @@ const GoalCard = ({ goal, exchangeRate, addContribution }) => {
       >
         + Add Contribution
       </button>
+
+      {/* 📜 View History & 🗑️ Delete Buttons */}
+      <div className="flex gap-2 mt-2">
+        <button
+          onClick={() => setShowHistory(prev => !prev)}
+          className="flex-1 border border-gray-300 text-gray-600 text-sm rounded-md py-1 hover:bg-indigo-50 hover:text-indigo-600 transition"
+        >
+          {showHistory ? 'Hide History' : '📜 View History'}
+        </button>
+
+        <button
+          onClick={() => {
+            if (window.confirm(`Delete goal "${goal.name}"?`)) {
+              onDelete(goal.id);
+            }
+          }}
+          className="flex-1 bg-red-50 text-red-600 border border-red-300 text-sm rounded-md py-1 hover:bg-red-100 transition"
+        >
+          🗑️ Delete
+        </button>
+      </div>
+
+      {/* 💾 Contribution History Section */}
+      {showHistory && goal.contributions.length > 0 && (
+        <ul className="mt-2 text-sm text-gray-700 space-y-1">
+          {goal.contributions.map((c, idx) => (
+            <li key={idx} className="flex justify-between border-b pb-1">
+              <span>{goal.currency} {c.amount}</span>
+              <span className="text-xs text-gray-500">
+                {c.date ? new Date(c.date).toLocaleDateString() : 'No Date'}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {showHistory && goal.contributions.length === 0 && (
+        <p className="text-sm text-gray-500 mt-1">No contributions yet.</p>
+      )}
     </div>
   );
 };

@@ -12,7 +12,7 @@ function App() {
   const [modalGoalId, setModalGoalId] = useState(null);
   const [exchangeRate, setExchangeRate] = useState(80);
   const [lastUpdated, setLastUpdated] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // ✅ loading state
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const savedGoals = Cookies.get('syfe_goals');
@@ -27,26 +27,21 @@ function App() {
     Cookies.set('syfe_goals', JSON.stringify(goals), { expires: 7 });
   }, [goals]);
 
-  // ✅ Load exchange rate and time with UI re-render trick
   const loadRate = async () => {
-    setIsLoading(true); // start loading
+    setIsLoading(true);
     try {
       const data = await fetchExchangeRate();
 
-      // ✅ Force update if rate is the same
       setExchangeRate(prev => {
         if (prev === data.rate) return data.rate + 0.0001;
         return data.rate;
       });
 
-      setLastUpdated(new Date(data.time).toLocaleString()); // format for UI
-
-      console.log("Exchange Rate:", data.rate);
-      console.log("Last Updated:", data.time);
+      setLastUpdated(new Date(data.time).toLocaleString());
     } catch (err) {
       alert("Failed to fetch exchange rate.");
     } finally {
-      setIsLoading(false); // end loading
+      setIsLoading(false);
     }
   };
 
@@ -62,6 +57,11 @@ function App() {
     );
   };
 
+  // ✅ Delete goal by ID
+  const deleteGoal = (goalId) => {
+    setGoals(prev => prev.filter(goal => goal.id !== goalId));
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f4f8ff] to-[#e0edff]">
       <div className="max-w-4xl mx-auto p-4 space-y-4">
@@ -73,13 +73,12 @@ function App() {
           </p>
         </div>
 
-        {/* ✅ Dashboard with refresh */}
         <DashboardSummary
           goals={goals}
           exchangeRate={exchangeRate}
           lastUpdated={lastUpdated}
           onRefresh={loadRate}
-          isLoading={isLoading} // ✅ pass loading
+          isLoading={isLoading}
         />
 
         <GoalForm addGoal={addGoal} />
@@ -91,6 +90,7 @@ function App() {
               goal={goal}
               exchangeRate={exchangeRate}
               addContribution={setModalGoalId}
+              onDelete={deleteGoal} // ✅ pass delete handler
             />
           ))}
         </div>
