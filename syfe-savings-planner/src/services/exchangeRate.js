@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-const API_KEY = "a28bb1d2781ed9757950c657";
+const API_KEY = import.meta.env.VITE_EXCHANGE_API_KEY;
 const API_URL = `https://v6.exchangerate-api.com/v6/${API_KEY}/latest/USD`;
+console.log("Loaded API Key:", import.meta.env.VITE_EXCHANGE_API_KEY);
 
 export const fetchExchangeRate = async () => {
   try {
@@ -15,7 +16,7 @@ export const fetchExchangeRate = async () => {
 
     return {
       rate: res.data.conversion_rates.INR,
-      time: new Date().toLocaleString(), 
+      time: new Date().toISOString(), 
     };
   } catch (err) {
     console.error("Exchange rate fetch error:", err.message);
