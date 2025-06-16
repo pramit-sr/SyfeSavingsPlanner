@@ -9,6 +9,9 @@ A modern and responsive savings goal tracker that helps you set, visualize, and 
 ## 📸 Demo
 
 **Live App:** [https://syfe-savings-planner-nine.vercel.app](https://syfe-savings-planner-nine.vercel.app)
+## 📸 Screenshot
+
+![App Screenshot](./src/assets/screenshot.png)
 
 ---
 
